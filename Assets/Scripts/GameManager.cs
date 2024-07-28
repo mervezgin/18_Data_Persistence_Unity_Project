@@ -1,11 +1,22 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-#if UNITY_EDITOR 
-using UnityEditor;
-#endif
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance;
+
+    string playerName;
+    int score;
+
+    void Awake()
+    {
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -16,19 +27,5 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-    }
-
-    public void StartTheGame()
-    {
-        SceneManager.LoadScene("main");
-    }
-
-    public void QuitTheGame()
-    {
-#if UNITY_EDITOR
-        EditorApplication.ExitPlaymode();
-#else
-        Application.Quit;
-#endif
     }
 }
