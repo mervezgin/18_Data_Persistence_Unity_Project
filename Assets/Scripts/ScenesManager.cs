@@ -3,14 +3,20 @@ using UnityEngine.SceneManagement;
 #if UNITY_EDITOR 
 using UnityEditor;
 #endif
-
 public class ScenesManager : MonoBehaviour
 {
-    public void StartTheGame()
+    public static ScenesManager Instance;
+    void Awake()
     {
-        SceneManager.LoadScene("main");
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
-
+    public void LoadScene(int sceneId) => SceneManager.LoadScene(sceneId);
     public void QuitTheGame()
     {
 #if UNITY_EDITOR

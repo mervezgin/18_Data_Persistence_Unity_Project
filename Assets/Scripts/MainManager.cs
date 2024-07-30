@@ -1,28 +1,24 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 public class MainManager : MonoBehaviour
 {
     public Brick BrickPrefab;
     public int LineCount = 6;
     public Rigidbody Ball;
-
     public Text ScoreText;
+    public Text highScoreText;
     public GameObject GameOverText;
-
     private bool m_Started = false;
     private int m_Points;
-
     private bool m_GameOver = false;
-
-
-    // Start is called before the first frame update
     void Start()
     {
+        ScoreText.text = $"{GameManager.Instance.GetName()} : Score : {m_Points}";
+        highScoreText.text = GameManager.Instance.GetHighScoreString();
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-
         int[] pointCountArray = new[] { 1, 1, 2, 2, 5, 5 };
         for (int i = 0; i < LineCount; ++i)
         {
@@ -35,7 +31,6 @@ public class MainManager : MonoBehaviour
             }
         }
     }
-
     private void Update()
     {
         if (!m_Started)
@@ -55,20 +50,27 @@ public class MainManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                ScenesManager.Instance.LoadScene(0);
             }
         }
     }
-
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
-    }
+        ScoreText.text = $"{GameManager.Instance.GetName()} : Score : {m_Points}";
+        if (m_Points > GameManager.Instance.GetHighScore())
+        {
+            GameManager.Instance.SetHighScore($"Highscore : {GameManager.Instance.GetName()} : {m_Points}", m_Points);
+            highScoreText.text = $"Highscore : {GameManager.Instance.GetName()} : {m_Points}";
 
+        }
+        else return;
+    }
     public void GameOver()
     {
+        GameManager.Instance.SaveHighscoreData();
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+    public void BackToMenu() => SceneManager.LoadScene("menu");
 }
